@@ -40,29 +40,39 @@ function displayToScreen() {
         }
     })
 
-    removeButton.addEventListener("click", (event)=> {
+    removeButton.addEventListener("click", ()=> {
         div.remove();
     })
 
-    div.childNodes[1].addEventListener('dblclick', ()=> {
-        let input = document.createElement('input');
-        input.type = "text";
-        input.value = div.childNodes[1].textContent.trim();
-        input.classList.add("editInput")
-
-        div.replaceChild(input, span);
-
-        input.addEventListener("keydown", (e)=>{
-            if(e.key === "Enter") {
-                let newspan = document.createElement("span");
-                newspan.textContent = input.value.trim();
-
-                
-                div.replaceChild(newspan, input);
-            }
-            
-        })
-    })
+    makeSpanEditable(span, div)
 
     work.value = "";
+}
+
+
+function makeSpanEditable(span, div) {
+  span.addEventListener("dblclick", () => {
+    const input = document.createElement("input");
+    input.value = span.textContent.trim();
+    input.classList.add("editInput");
+
+    div.replaceChild(input, span);
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const newspan = document.createElement("span");
+        newspan.textContent = input.value.trim();
+
+        // carry over completed class
+        if (span.classList.contains("completed")) {
+          newspan.classList.add("completed");
+        }
+
+        // reattach the edit logic
+        makeSpanEditable(newspan, div);
+
+        div.replaceChild(newspan, input);
+      }
+    });
+  });
 }
